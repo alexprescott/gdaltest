@@ -1,10 +1,12 @@
 FROM gcc:4.9 AS build
 
+# Set work directory and copy work files into it
 COPY . /usr/src/gdaltest
 WORKDIR /usr/src/gdaltest
 
+# Get updates and install gdal developer library + suggested libraries
 RUN apt-get update && apt-get install -y libgdal-dev gcc-4.9-locales g++-4.9-multilib libstdc++6-4.9-dbg gcc-4.9-multilib libgcc1-dbg libgomp1-dbg libitm1-dbg libatomic1-dbg libasan1-dbg liblsan0-dbg libtsan0-dbg libubsan0-dbg libcilkrts5-dbg libquadmath0-dbg libgdal-doc libhdf4-doc hdf4-tools libhdf5-doc icu-doc netcdf-bin netcdf-doc libmyodbc odbc-postgresql tdsodbc unixodbc-bin ogdi-bin libstdc++-4.9-doc libxerces-c-doc poppler-utils ghostscript
-
+# Set environment path to gdal.h header
 ENV C_INCLUDE_PATH=/usr/include/gdal
 
 # Compile executable
@@ -16,7 +18,7 @@ RUN mkdir -p /tmp/fakeroot/lib  && \
         for lib in /tmp/fakeroot/lib/*; do strip --strip-all $lib; done
 
 
-
+# Build a smaller second image to run executable
 FROM ubuntu
 WORKDIR /usr/src/gdaltest
 
